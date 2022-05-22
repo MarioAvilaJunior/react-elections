@@ -1,4 +1,4 @@
-interface ICity {
+export interface ICity {
   id: string;
   name: string;
   votingPopulation: number;

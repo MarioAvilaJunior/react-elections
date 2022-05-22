@@ -1,5 +1,3 @@
-import { JsxElement } from "typescript";
-
 interface IHeaderProps {
   children?: React.ReactNode;
   size?: string;
