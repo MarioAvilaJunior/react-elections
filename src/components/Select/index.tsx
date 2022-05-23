@@ -3,24 +3,20 @@ import { ICity } from "../../data/allCities";
 
 interface ISelectProps {
   cities: ICity[];
-  selectedCity: string;
+  selectedCity: ICity;
+  handleSelectedCity: (cityName: string) => void;
 }
 
 const Select = (props: ISelectProps) => {
-  const { cities, selectedCity } = props;
-  const [city, setCity] = React.useState<string>(cities[0].name);
-
-  React.useEffect(() => {
-    setCity(selectedCity);
-  }, [city, selectedCity]);
+  const { cities, selectedCity, handleSelectedCity } = props;
 
   const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setCity(event.target.value);
+    handleSelectedCity(event.target.value);
   };
   return (
     <select
       className="browser-default"
-      value={selectedCity}
+      value={selectedCity.name}
       onChange={handleCityChange}
     >
       {cities.map((city) => {

@@ -1,4 +1,4 @@
-interface ICandidate {
+export interface ICandidate {
   id: string;
   name: string;
   username: string;
