@@ -1,11 +1,11 @@
-interface IElection {
+export interface IElection {
   id: string;
   cityId: string;
   candidateId: string;
   votes: number;
 }
 
-export const election: IElection[] = [
+export const elections: IElection[] = [
   {
     id: "09194903-aafb-402e-8e5f-305bece66fbb",
     cityId: "d2dab6a2-3029-45a5-89f2-fcbaee387758",

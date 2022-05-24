@@ -11,6 +11,7 @@ import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
+import { ICandidate } from "../../data/allCandidates";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,7 +38,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const CandidateCard = () => {
+interface ICandidateCardProps {
+  candidate: ICandidate;
+}
+
+const CandidateCard = (props: ICandidateCardProps) => {
+  const { candidate } = props;
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 

@@ -1,10 +1,23 @@
 import React from "react";
 import { CandidateCard, Header, Main, Select } from "../components";
 import { ICity, cities } from "../data/allCities";
+import { candidates } from "../data/allCandidates";
+import { elections, IElection } from "../data/allElections";
 import Box from "@material-ui/core/Box";
+import { CountCandidates } from "../functions/CountCandidates";
 
 const ReactElections = () => {
   const [selectedCity, setSelectedCity] = React.useState<ICity>(cities[0]);
+  const [selectedElections, setSelectedElections] = React.useState<
+    IElection[] | null
+  >(null);
+
+  React.useEffect(() => {
+    const checkSelectedCityId = (election: IElection) => {
+      return election.cityId === selectedCity.id;
+    };
+    setSelectedElections(elections.filter(checkSelectedCityId));
+  }, [selectedCity]);
 
   const handleSelectedCity = (cityName: string) => {
     const index = cities.findIndex((city) => city.name === cityName);
@@ -28,14 +41,19 @@ const ReactElections = () => {
             alignItems="center"
             justifyContent="space-between"
             padding="8px 16px"
-            width="500px"
+            width="800px"
           >
             <Box>{`Total de eleitores: ${selectedCity.votingPopulation}`}</Box>
             <Box>{`Abstenção: ${selectedCity.absence}`}</Box>
             <Box>{`Comparecimento: ${selectedCity.presence}`}</Box>
+            <Box>{`${CountCandidates(
+              elections,
+              selectedCity
+            )} candidatos`}</Box>
           </Box>
           <Box>
-            <CandidateCard />
+            {/*candidates.filter()
+              <CandidateCard />*/}
           </Box>
         </div>
       </Main>
