@@ -6,6 +6,10 @@ import { elections, IElection } from "../data/allElections";
 import Box from "@material-ui/core/Box";
 import { CountCandidates } from "../functions/CountCandidates";
 
+interface IElectionWithCandidateName extends IElection {
+  candidateName: string;
+}
+
 const ReactElections = () => {
   const [selectedCity, setSelectedCity] = React.useState<ICity>(cities[0]);
   const [selectedElections, setSelectedElections] = React.useState<
@@ -16,7 +20,9 @@ const ReactElections = () => {
     const checkSelectedCityId = (election: IElection) => {
       return election.cityId === selectedCity.id;
     };
-    setSelectedElections(elections.filter(checkSelectedCityId));
+    setSelectedElections(
+      elections.filter(checkSelectedCityId).sort((a, b) => b.votes - a.votes)
+    );
   }, [selectedCity]);
 
   const handleSelectedCity = (cityName: string) => {
@@ -51,9 +57,24 @@ const ReactElections = () => {
               selectedCity
             )} candidatos`}</Box>
           </Box>
-          <Box>
-            {/*candidates.filter()
-              <CandidateCard />*/}
+          <Box display="flex">
+            {selectedElections &&
+              selectedElections.map(
+                (selectedElection, index, selectedElections) => {
+                  return (
+                    <CandidateCard
+                      key={selectedElection.id}
+                      election={selectedElection}
+                      candidates={candidates}
+                      totalElectionVotes={selectedElections.reduce(
+                        (partialSum, election) => partialSum + election.votes,
+                        0
+                      )}
+                      elected={index === 0}
+                    />
+                  );
+                }
+              )}
           </Box>
         </div>
       </Main>
