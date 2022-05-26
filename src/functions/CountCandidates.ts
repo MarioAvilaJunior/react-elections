@@ -1,5 +1,4 @@
-import { IElection } from "../data/allElections";
-import { ICity } from "../data/allCities";
+import { ICity, IElection } from "../../backend-react-elections/interfaces";
 
 const CountCandidates = (
   elections: IElection[],

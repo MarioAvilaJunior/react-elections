@@ -1,5 +1,5 @@
 import React from "react";
-import { ICity } from "../../data/allCities";
+import { ICity } from "../../../backend-react-elections/interfaces";
 
 interface ISelectProps {
   cities: ICity[];
