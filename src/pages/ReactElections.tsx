@@ -1,5 +1,5 @@
 import React from "react";
-import { CandidateCard, Header, Main, Select } from "../components";
+import { CandidateCard, Header, Main, Select, Spinner } from "../components";
 import {
   ICity,
   ICandidate,
@@ -9,6 +9,11 @@ import Box from "@material-ui/core/Box";
 import { CountCandidates } from "../functions/CountCandidates";
 import { getAllCandidates, getAllCities, getElectionFrom } from "../api/api";
 
+export interface IElectionWithCandidate extends IElection {
+  candidateName: string;
+  candidateUserName: string;
+}
+
 const ReactElections = () => {
   const [cities, setCities] = React.useState<ICity[]>([]);
   const [candidates, setCandidates] = React.useState<ICandidate[]>([]);
@@ -16,29 +21,62 @@ const ReactElections = () => {
   const [selectedElection, setSelectedElection] = React.useState<IElection[]>(
     []
   );
+  const [election, setElection] = React.useState<IElectionWithCandidate[]>([]);
+  const [loadingPage, setLoadingPage] = React.useState<boolean>(true);
+  const [totalElectionVotes, setTotalElectionVotes] = React.useState<number>(0);
 
   React.useEffect(() => {
-    const getData = async () => {
-      setCities(await getAllCities());
-      setCandidates(await getAllCandidates());
+    const getBackendData = async () => {
+      const backEndData = {
+        cities: await getAllCities(),
+        candidates: await getAllCandidates(),
+      };
+      setCities(backEndData.cities);
+      setCandidates(backEndData.candidates);
+      setSelectedCity(backEndData.cities[0]);
+      setLoadingPage(false);
     };
-    getData();
+    getBackendData();
   }, []);
 
   React.useEffect(() => {
-    if (cities && !selectedCity) setSelectedCity(cities[0]);
     if (selectedCity) {
       const getElection = async (cityId: string) => {
         setSelectedElection(await getElectionFrom(cityId));
       };
       getElection(selectedCity.id);
     }
-  }, [cities, selectedCity]);
+  }, [selectedCity]);
+
+  React.useEffect(() => {
+    const electionWithCandidate = selectedElection.map((election) => {
+      const foundCandidate =
+        candidates.find((candidate) => candidate.id === election.candidateId) ??
+        null;
+      const result = {
+        ...election,
+        candidateName: foundCandidate?.name || "",
+        candidateUserName: foundCandidate?.username || "",
+      };
+      return result;
+    });
+    setElection(electionWithCandidate);
+  }, [candidates, selectedElection]);
+
+  React.useEffect(() => {
+    const totalElectionVotes = election.reduce(
+      (accumulator, election) => (accumulator += election.votes),
+      0
+    );
+    setTotalElectionVotes(totalElectionVotes);
+  }, [election]);
 
   const handleSelectedCity = (cityName: string) => {
-    const index = cities.findIndex((city) => city.name === cityName);
-    setSelectedCity(cities[index]);
+    const foundCity = cities.find((city) => city.name === cityName) ?? null;
+    setSelectedCity(foundCity);
   };
+
+  if (loadingPage) return <Spinner />;
 
   return (
     <>
@@ -71,23 +109,16 @@ const ReactElections = () => {
               </Box>
               <Box display="flex">
                 {selectedElection &&
-                  selectedElection.map(
-                    (selectedElection, index, selectedElectionArray) => {
-                      return (
-                        <CandidateCard
-                          key={selectedElection.id}
-                          election={selectedElection}
-                          candidates={candidates}
-                          totalElectionVotes={selectedElectionArray.reduce(
-                            (partialSum, election) =>
-                              partialSum + election.votes,
-                            0
-                          )}
-                          elected={index === 0}
-                        />
-                      );
-                    }
-                  )}
+                  election.map((election, index) => {
+                    return (
+                      <CandidateCard
+                        key={election.id}
+                        election={election}
+                        totalElectionVotes={totalElectionVotes}
+                        elected={index === 0}
+                      />
+                    );
+                  })}
               </Box>
             </>
           )}

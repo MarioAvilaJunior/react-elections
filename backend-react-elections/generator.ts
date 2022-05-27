@@ -1,6 +1,5 @@
 import { ICandidate, ICity, IElection } from "./interfaces";
 
-const uuid = require("uuid").v4;
 const fs = require("fs").promises;
 
 async function start() {

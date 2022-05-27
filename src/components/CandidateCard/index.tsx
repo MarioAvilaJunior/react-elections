@@ -6,10 +6,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
-import {
-  ICandidate,
-  IElection,
-} from "../../../backend-react-elections/interfaces";
+import { IElectionWithCandidate } from "../../pages/ReactElections";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,29 +34,14 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface ICandidateCardProps {
-  election: IElection;
-  candidates: ICandidate[];
+  election: IElectionWithCandidate;
   totalElectionVotes: number;
   elected: boolean;
 }
 
 const CandidateCard = (props: ICandidateCardProps) => {
-  const { election, candidates, totalElectionVotes, elected } = props;
+  const { election, totalElectionVotes, elected } = props;
   const classes = useStyles();
-
-  const findCandidateProperty = (
-    election: IElection,
-    candidates: ICandidate[],
-    property: string = "name"
-  ): string => {
-    const index = candidates.findIndex(
-      (candidate) => candidate.id === election.candidateId
-    );
-    if (property === "img")
-      return `/../../../img/${candidates[index].username}.png`;
-
-    return candidates[index].name;
-  };
 
   const candidateVotesPercentage = (electionVotes: number): string => {
     return (
@@ -74,10 +56,10 @@ const CandidateCard = (props: ICandidateCardProps) => {
           <Avatar
             aria-label="candidate"
             className={classes.avatar}
-            src={findCandidateProperty(election, candidates, "img")}
+            src={`/../../../img/${election.candidateUserName}.png`}
           />
         }
-        title={findCandidateProperty(election, candidates)}
+        title={election.candidateName}
         subheader={
           candidateVotesPercentage(election.votes) +
           `\r\n${election.votes} votos`
